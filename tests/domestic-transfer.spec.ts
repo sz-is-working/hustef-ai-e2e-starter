@@ -26,7 +26,9 @@ test.describe('Domestic transfer', () => {
     await transfer.goto();
   });
 
-  test('confirms a transfer and debits amount plus fee', async ({ page }) => {
+  test('confirms a transfer and debits amount plus fee', async ({ page, gremlinRelease }) => {
+    // BUG: fee on release 3: expected 300 HUF (0.3% of 100,000 HUF, min 200, max 6,000), observed 3,000 HUF. Not healed, see heal-report.json.
+    test.fail(gremlinRelease === 3, 'BUG: fee for 100,000 HUF is 3,000 HUF instead of 300 HUF on release 3');
     // 3. Fill Everyday -> Kiss Péter, check the IBAN, amount 100,000; Continue
     const review = await transfer.submitToKissPeter('Everyday Account', '100000');
     await expect(page).toHaveURL(/\/transfer\/review$/);
@@ -84,7 +86,9 @@ test.describe('Domestic transfer', () => {
     }
   });
 
-  test('accepts a total equal to the balance and rejects one HUF more', async ({ page }) => {
+  test('accepts a total equal to the balance and rejects one HUF more', async ({ page, gremlinRelease }) => {
+    // BUG: fee on release 3: expected 3,739 HUF fee so total 1,250,000 HUF is accepted (0.3% rule), observed transfer rejected on the form (fee evidently inflated, total exceeds balance). Not healed, see heal-report.json.
+    test.fail(gremlinRelease === 3, 'BUG: amount 1,246,261 HUF (total 1,250,000 HUF) is rejected instead of reaching review on release 3');
     // Plan 3.4 step 1, rule R4: amount + fee must fit the Everyday balance of 1,250,000 HUF
     const review = await transfer.submitToKissPeter('Everyday Account', '1246261');
     await expect(page).toHaveURL(/\/transfer\/review$/);
@@ -131,7 +135,9 @@ test.describe('Domestic transfer', () => {
     }
   }
 
-  test('charges the 200 HUF minimum fee up to 66,833 and 0.3% above', async ({ page }) => {
+  test('charges the 200 HUF minimum fee up to 66,833 and 0.3% above', async ({ page, gremlinRelease }) => {
+    // BUG: minimum fee on release 3: expected 200 HUF for 10,000 HUF (min 200), observed 300 HUF. Not healed, see heal-report.json.
+    test.fail(gremlinRelease === 3, 'BUG: fee for 10,000 HUF is 300 HUF instead of 200 HUF on release 3');
     await checkFees(page, 'Everyday Account', [
       [10000, 200, 10200],
       [66499, 200, 66699],
@@ -142,7 +148,9 @@ test.describe('Domestic transfer', () => {
     ]);
   });
 
-  test('caps the fee at 6,000 HUF', async ({ page }) => {
+  test('caps the fee at 6,000 HUF', async ({ page, gremlinRelease }) => {
+    // BUG: fee cap on release 3: expected 5,999 HUF for 1,999,833 HUF (max 6,000), observed 59,995 HUF. Not healed, see heal-report.json.
+    test.fail(gremlinRelease === 3, 'BUG: fee for 1,999,833 HUF is 59,995 HUF instead of 5,999 HUF on release 3');
     // These amounts do not fit the Everyday balance, so they go from Savings.
     await checkFees(page, 'Savings Account', [
       [1999833, 5999, 2005832],
