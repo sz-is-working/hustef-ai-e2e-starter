@@ -35,7 +35,7 @@ test.describe('Domestic transfer', () => {
     await expect(review.fee).toHaveText('300 HUF');
     await expect(review.total).toHaveText('100,300 HUF');
 
-    // 4. Enter the PIN, confirm and approve the payment in the 'Gremlin Secure' frame
+    // 4. Enter the PIN, confirm and approve the payment in the 'Payment approval' frame
     await review.enterPin(env('GREMLIN_PIN'));
     await review.confirm();
     await expect(review.approvalHeading('Approve this payment of 100,300 HUF')).toBeVisible();
@@ -60,7 +60,7 @@ test.describe('Domestic transfer', () => {
     // 1. Continue with every field empty
     await transfer.continue();
     await expect(page).toHaveURL(/\/transfer$/);
-    await expect(transfer.message('Enter a beneficiary name.')).toBeVisible();
+    await expect(transfer.beneficiaryRequiredMessage).toBeVisible();
     await expect(transfer.message('Check the IBAN first.')).toBeVisible();
     await expect(transfer.message('Enter an amount greater than 0.')).toBeVisible();
 
@@ -68,7 +68,7 @@ test.describe('Domestic transfer', () => {
     await transfer.fillTransfer({ name: 'Kiss Péter', iban: KISS_PETER_IBAN, amount: '0' });
     await transfer.continue();
     await expect(page).toHaveURL(/\/transfer$/);
-    await expect(transfer.message('Enter a beneficiary name.')).toBeHidden();
+    await expect(transfer.beneficiaryRequiredMessage).toBeHidden();
     await expect(transfer.message('Check the IBAN first.')).toBeVisible();
     await expect(transfer.message('Enter an amount greater than 0.')).toBeVisible();
   });

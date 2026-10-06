@@ -9,8 +9,8 @@ import { test as base, expect, type BrowserContext } from '@playwright/test';
  *   empty   follow the release the facilitator ships (the default)
  *   1, 2, 3 pin that release for every browser context with the `gb_release` cookie
  *
- * This file does not dismiss the cookie consent dialog that later releases show.
- * Handling it is part of Lab 4.
+ * Release 2 shows a cookie consent dialog; the `page` fixture accepts it whenever it appears
+ * (a locator handler, so it runs only when the dialog is there).
  */
 
 export type Release = 1 | 2 | 3;
@@ -51,6 +51,14 @@ export const test = base.extend<{}, WorkerFixtures>({
   context: async ({ context, baseURL }, use) => {
     await pinRelease(context, baseURL!);
     await use(context);
+  },
+
+  page: async ({ page }, use) => {
+    const consent = page.getByRole('dialog').filter({ has: page.getByRole('heading', { name: 'Cookies' }) });
+    await page.addLocatorHandler(consent, async () => {
+      await consent.getByRole('button', { name: 'Accept all' }).click();
+    });
+    await use(page);
   },
 
   gremlinRelease: [

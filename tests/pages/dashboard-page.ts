@@ -46,9 +46,9 @@ export class DashboardPage {
     return this.page.getByText('Signed in as');
   }
 
-  // An account card is a region named by its h2 heading.
+  // The accounts are rows of a table whose row header is the account name.
   accountCard(name: AccountName): Locator {
-    return this.page.getByRole('region').filter({ has: this.page.getByRole('heading', { name }) });
+    return this.page.getByRole('row').filter({ has: this.page.getByRole('rowheader', { name, exact: true }) });
   }
 
   // Cells of a Recent transactions row: Date, Description, Amount.

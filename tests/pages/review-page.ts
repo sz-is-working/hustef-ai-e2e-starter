@@ -8,7 +8,6 @@ export class ReviewPage {
   readonly heading: Locator;
   readonly changeDetailsLink: Locator;
   readonly confirmButton: Locator;
-  // The 'Gremlin Secure' frame (title attribute) inside the 'Confirm payment' dialog (the dialog has no accessible name).
   readonly secureFrame: FrameLocator;
   readonly approvePaymentButton: Locator;
   readonly doneHeading: Locator;
@@ -18,10 +17,11 @@ export class ReviewPage {
   constructor(private readonly page: Page) {
     this.heading = page.getByRole('heading', { level: 1, name: 'Review transfer' });
     this.changeDetailsLink = page.getByRole('link', { name: 'Change details' });
-    this.confirmButton = page.getByRole('button', { name: 'Confirm transfer' });
-    this.secureFrame = page.getByRole('dialog').getByTitle('Gremlin Secure').contentFrame();
-    this.approvePaymentButton = this.secureFrame.getByRole('button', { name: 'Approve payment' });
-    this.doneHeading = page.getByRole('heading', { level: 1, name: 'Transfer submitted' });
+    this.confirmButton = page.getByRole('button', { name: 'Send money' });
+    // The approval frame is found by its title attribute.
+    this.secureFrame = page.getByRole('dialog').getByTitle('Payment approval').contentFrame();
+    this.approvePaymentButton = this.secureFrame.getByRole('button', { name: 'Approve' });
+    this.doneHeading = page.getByRole('heading', { level: 1, name: 'Money sent' });
     this.reference = page.getByText(/^Reference: /);
     this.backToAccountsLink = page.getByRole('link', { name: 'Back to accounts' });
   }
@@ -34,7 +34,7 @@ export class ReviewPage {
   get fee() { return this.reviewCell('Fee'); }
   get total() { return this.reviewCell('Total'); }
 
-  // Texts inside the 'Gremlin Secure' approval frame.
+  // Texts inside the approval frame.
   approvalHeading(text: string): Locator {
     return this.secureFrame.getByRole('heading', { name: text });
   }
@@ -59,7 +59,7 @@ export class ReviewPage {
   }
 
   // The PIN field is a closed shadow root without an accessible role (plan R7):
-  // it is the control right before the 'Confirm transfer' button.
+  // it is the control right before the 'Send money' button.
   async enterPin(pin: string) {
     await this.confirmButton.focus();
     await this.page.keyboard.press('Shift+Tab');

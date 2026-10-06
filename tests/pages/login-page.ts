@@ -11,10 +11,10 @@ export class LoginPage {
   readonly alert: Locator;
 
   constructor(private readonly page: Page) {
-    this.heading = page.getByRole('heading', { level: 1, name: 'Sign in to Gremlin Bank' });
-    this.username = page.getByRole('textbox', { name: 'Username' });
+    this.heading = page.getByRole('heading', { level: 1, name: 'Welcome back' });
+    this.username = page.getByRole('textbox', { name: 'User ID' });
     this.password = page.getByRole('textbox', { name: 'Password' });
-    this.signInButton = page.getByRole('button', { name: 'Sign in' });
+    this.signInButton = page.getByRole('button', { name: 'Log in' });
     this.alert = page.getByRole('alert');
   }
 

@@ -19,11 +19,11 @@ export class TransferPage {
   constructor(private readonly page: Page) {
     this.heading = page.getByRole('heading', { level: 1, name: 'New transfer' });
     this.fromAccount = page.getByRole('combobox', { name: 'From account' });
-    this.beneficiary = page.getByRole('textbox', { name: 'Beneficiary name' });
+    this.beneficiary = page.getByRole('textbox', { name: 'Payee name' });
     this.iban = page.getByRole('textbox', { name: 'IBAN' });
     this.checkIbanButton = page.getByRole('button', { name: 'Check IBAN' });
     this.amount = page.getByRole('textbox', { name: 'Amount (HUF)' });
-    this.continueButton = page.getByRole('button', { name: 'Continue' });
+    this.continueButton = page.getByRole('button', { name: 'Review transfer' });
     this.ibanStatus = page.getByRole('status');
   }
 
@@ -35,6 +35,11 @@ export class TransferPage {
   // A validation or limit message shown on the form, e.g. 'Insufficient funds.'.
   message(text: string): Locator {
     return this.page.getByText(text);
+  }
+
+  // Shown when the payee name is empty.
+  get beneficiaryRequiredMessage(): Locator {
+    return this.page.getByText('Enter a payee name.');
   }
 
   async fillTransfer(data: { from?: AccountName; name: string; iban: string; amount: string }) {
