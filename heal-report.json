@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "createdAt": "2026-10-06T14:00:00Z",
+  "release": 3,
+  "tool": "claude-code",
+  "model": "claude-sonnet-5-5",
+  "entries": [
+    {
+      "test": "tests/domestic-transfer.spec.ts:29 > Domestic transfer > confirms a transfer and debits amount plus fee",
+      "file": "tests/domestic-transfer.spec.ts",
+      "error": "expect(locator).toHaveText(expected) failed: expected \"300 HUF\", received \"3,000 HUF\"",
+      "classification": "BUG",
+      "reason": "Rule R3: fee = 0.3% (min 200, max 6,000 HUF). 0.3% of 100,000 HUF is 300 HUF; the review page shows 3,000 HUF.",
+      "change": "Added test.fail(gremlinRelease === 3, ...) with a BUG comment. Assertions unchanged.",
+      "expectedValueChanged": false,
+      "expected": "300 HUF (0.3% of 100,000 HUF)",
+      "observed": "3,000 HUF",
+      "tracePath": "test-results/tests-domestic-transfer-Do-bffa2--and-debits-amount-plus-fee-chromium/trace.zip",
+      "model": "claude-sonnet-5-5",
+      "tool": "claude-code"
+    },
+    {
+      "test": "tests/domestic-transfer.spec.ts:87 > Domestic transfer > accepts a total equal to the balance and rejects one HUF more",
+      "file": "tests/domestic-transfer.spec.ts",
+      "error": "expect(page).toHaveURL(/\\/transfer\\/review$/) failed: received https://gremlin.shiwa.io/transfer (page shows 'Insufficient funds.')",
+      "classification": "BUG",
+      "reason": "Rule R4: amount + fee must fit the balance. 1,246,261 + 3,739 (0.3% fee) = 1,250,000 = the Everyday balance, so it must be accepted. The app rejects it with 'Insufficient funds.', consistent with the inflated fee seen in the other release 3 failures. Not a UI change.",
+      "change": "Added test.fail(gremlinRelease === 3, ...) with a BUG comment. Assertions unchanged.",
+      "expectedValueChanged": false,
+      "expected": "Review page with fee 3,739 HUF and total 1,250,000 HUF",
+      "observed": "Stays on /transfer with 'Insufficient funds.'",
+      "tracePath": "test-results/tests-domestic-transfer-Do-c8240-ce-and-rejects-one-HUF-more-chromium/trace.zip",
+      "model": "claude-sonnet-5-5",
+      "tool": "claude-code"
+    },
+    {
+      "test": "tests/domestic-transfer.spec.ts:134 > Domestic transfer > charges the 200 HUF minimum fee up to 66,833 and 0.3% above",
+      "file": "tests/domestic-transfer.spec.ts",
+      "error": "expect(locator).toHaveText(expected) failed: expected \"200 HUF\", received \"300 HUF\" (Everyday Account, 10000)",
+      "classification": "BUG",
+      "reason": "Rule R3: minimum fee is 200 HUF; 0.3% of 10,000 is 30, so the fee must be 200 HUF. The page shows 300 HUF (looks like 3%).",
+      "change": "Added test.fail(gremlinRelease === 3, ...) with a BUG comment. Assertions unchanged.",
+      "expectedValueChanged": false,
+      "expected": "200 HUF (minimum fee)",
+      "observed": "300 HUF",
+      "tracePath": "test-results/tests-domestic-transfer-Do-3f4a2--up-to-66-833-and-0-3-above-chromium/trace.zip",
+      "model": "claude-sonnet-5-5",
+      "tool": "claude-code"
+    },
+    {
+      "test": "tests/domestic-transfer.spec.ts:145 > Domestic transfer > caps the fee at 6,000 HUF",
+      "file": "tests/domestic-transfer.spec.ts",
+      "error": "expect(locator).toHaveText(expected) failed: expected \"5,999 HUF\", received \"59,995 HUF\" (Savings Account, 1999833)",
+      "classification": "BUG",
+      "reason": "Rule R3: fee is capped at 6,000 HUF; 0.3% of 1,999,833 is 5,999. The page shows 59,995 HUF, above the cap.",
+      "change": "Added test.fail(gremlinRelease === 3, ...) with a BUG comment. Assertions unchanged.",
+      "expectedValueChanged": false,
+      "expected": "5,999 HUF",
+      "observed": "59,995 HUF",
+      "tracePath": "test-results/tests-domestic-transfer-Do-cd40f-r-caps-the-fee-at-6-000-HUF-chromium/trace.zip",
+      "model": "claude-sonnet-5-5",
+      "tool": "claude-code"
+    }
+  ]
+}
