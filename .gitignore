@@ -10,3 +10,4 @@ node_modules/
 /audit-heal.md
 *.log
 .DS_Store
+specs\gremlin-bank-run2.md
